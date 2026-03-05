@@ -50,16 +50,54 @@ export default function JobDetail() {
     const saveApplication = async () => {
         try {
             setSaving(true);
+            setError("");
+
+            const fullPhone = `${formData.countryCode}${formData.phone}`;
+
+            // Check for existing email or phone
+            const { data: existingApp, error: fetchError } = await supabase
+                .from("applications")
+                .select("email, phone")
+                .or(`email.eq.${formData.email},phone.eq.${fullPhone}`)
+                .maybeSingle();
+
+            if (fetchError) {
+                console.error("Fetch error:", fetchError);
+                setError("Verification failed. Please try again.");
+                setSaving(false);
+                return null;
+            }
+
+            if (existingApp) {
+                let message = "";
+                if (existingApp.email === formData.email && existingApp.phone === fullPhone) {
+                    message = "An application with this email and phone number already exists.";
+                } else if (existingApp.email === formData.email) {
+                    message = "An application with this email address already exists.";
+                } else {
+                    message = "An application with this mobile number already exists.";
+                }
+
+                Swal.fire({
+                    title: "Duplicate Application",
+                    text: message,
+                    icon: "warning",
+                    confirmButtonColor: "#003366"
+                });
+
+                setSaving(false);
+                return null;
+            }
 
             const appNumber = generateApplicationNumber();
 
-            const { error } = await supabase
+            const { error: insertError } = await supabase
                 .from("applications")
                 .insert([
                     {
                         application_number: appNumber,
                         email: formData.email,
-                        phone: `${formData.countryCode}${formData.phone}`,
+                        phone: fullPhone,
                         experience: answers.q1,
                         relocate: answers.q2,
                         language: answers.q3,
@@ -67,8 +105,8 @@ export default function JobDetail() {
                     }
                 ]);
 
-            if (error) {
-                console.error(error);
+            if (insertError) {
+                console.error(insertError);
                 setError("Failed to save application. Please try again.");
                 setSaving(false);
                 return null;

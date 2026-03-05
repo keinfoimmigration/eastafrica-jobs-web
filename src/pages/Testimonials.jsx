@@ -7,6 +7,34 @@ export default function Testimonials() {
     // ✅ Dummy testimonials data
     const testimonialsData = [
         {
+            id: 7,
+            name: "David Kimani",
+            date: "2026-03-04",
+            story: "Just received my visa approval today! The level of professionalism and support from this team is unmatched. I'll be flying to Hamburg next month!",
+            imageUrl: ""
+        },
+        {
+            id: 8,
+            name: "Sarah Wangari",
+            date: "2026-03-02",
+            story: "The interview prep was the key for me. I felt so confident during my interview with the German employer. I'm officially a tech lead in Stuttgart now!",
+            imageUrl: ""
+        },
+        {
+            id: 9,
+            name: "Kelvin Mutua",
+            date: "2026-02-28",
+            story: "I was skeptical at first, but every step was transparent. From data submission to job offer, it took less than 4 months. Highly recommended for everyone.",
+            imageUrl: ""
+        },
+        {
+            id: 10,
+            name: "Lydia Moraa",
+            date: "2026-02-26",
+            story: "Moving to Germany as a nurse seemed like a mountain, but this community made it a smooth walk. I'm now settled in Berlin and loving the city!",
+            imageUrl: ""
+        },
+        {
             id: 1,
             name: "John Mwangi",
             date: "2025-03-15",
@@ -62,6 +90,27 @@ export default function Testimonials() {
         return testimonialsData.slice(start, start + perPage);
     }, [page]);
 
+    const getRelativeDate = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        const diffInDays = Math.floor(diffInSeconds / 86400);
+
+        if (diffInDays < 1) return "Today";
+        if (diffInDays === 1) return "Yesterday";
+        if (diffInDays < 7) return `${diffInDays} days ago`;
+        if (diffInDays < 30) {
+            const weeks = Math.floor(diffInDays / 7);
+            return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+        }
+        
+        return date.toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    };
+
     if (testimonialsData.length === 0)
         return <p className="no-testimonials">No testimonials found.</p>;
 
@@ -96,11 +145,7 @@ export default function Testimonials() {
                                     className="testimonial-date"
                                     dateTime={new Date(date).toISOString()}
                                 >
-                                    {new Date(date).toLocaleDateString(undefined, {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    })}
+                                    {getRelativeDate(date)}
                                 </time>
                             </header>
                             <div
