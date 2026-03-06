@@ -8,70 +8,70 @@ export default function Testimonials() {
     const testimonialsData = [
         {
             id: 7,
-            name: "David Kimani",
-            date: "2026-03-04",
+            name: "Cynthia Maina",
+            date: "2026-03-03", // 3 days ago from March 6
             story: "Just received my visa approval today! The level of professionalism and support from this team is unmatched. I'll be flying to Hamburg next month!",
             imageUrl: ""
         },
         {
             id: 8,
-            name: "Sarah Wangari",
-            date: "2026-03-02",
+            name: "Juma Bakari",
+            date: "2026-02-20", // About 2 weeks ago
             story: "The interview prep was the key for me. I felt so confident during my interview with the German employer. I'm officially a tech lead in Stuttgart now!",
             imageUrl: ""
         },
         {
             id: 9,
-            name: "Kelvin Mutua",
-            date: "2026-02-28",
+            name: "Amina Hassan",
+            date: "2026-02-20", // 2 weeks ago
             story: "I was skeptical at first, but every step was transparent. From data submission to job offer, it took less than 4 months. Highly recommended for everyone.",
             imageUrl: ""
         },
         {
             id: 10,
-            name: "Lydia Moraa",
-            date: "2026-02-26",
+            name: "Samuel Omondi",
+            date: "2026-02-15",
             story: "Moving to Germany as a nurse seemed like a mountain, but this community made it a smooth walk. I'm now settled in Berlin and loving the city!",
             imageUrl: ""
         },
         {
             id: 1,
-            name: "John Mwangi",
+            name: "Beatrice Anyango",
             date: "2025-03-15",
             story: "Thanks to this program, I secured a nursing job in Berlin within 6 months. The support throughout the visa process was incredible!",
             imageUrl: ""
         },
         {
             id: 2,
-            name: "Grace Achieng",
+            name: "Evans Kiprotich",
             date: "2025-05-10",
             story: "I never thought working in Germany was possible until I joined this community. Now I’m happily employed in Munich!",
             imageUrl: ""
         },
         {
             id: 3,
-            name: "Peter Otieno",
+            name: "Scolastica Mutua",
             date: "2025-06-20",
             story: "The guidance on documentation and interview preparation made all the difference. Highly recommend!",
             imageUrl: ""
         },
         {
             id: 4,
-            name: "Faith Wanjiru",
+            name: "Derrick Wafula",
             date: "2025-07-01",
             story: "Professional, supportive, and reliable. I’m now working in Frankfurt and living my dream.",
             imageUrl: ""
         },
         {
             id: 5,
-            name: "Brian Kiptoo",
+            name: "Lilian Kerubo",
             date: "2024-08-12",
             story: "Clear process, step-by-step assistance, and amazing mentorship. Germany is now my second home!",
             imageUrl: ""
         },
         {
             id: 6,
-            name: "Esther Njeri",
+            name: "Mohamed Ali",
             date: "2024-09-05",
             story: "From language training to job placement, everything was handled professionally. Thank you!",
             imageUrl: ""
