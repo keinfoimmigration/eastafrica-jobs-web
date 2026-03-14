@@ -111,7 +111,7 @@ export default function JobDetail() {
 
             // Check for existing email or phone
             const { data: existingApp, error: fetchError } = await supabase
-                .from("applications")
+                .from("EACapplications")
                 .select("email, phone")
                 .or(`email.eq.${formData.email},phone.eq.${fullPhone}`)
                 .maybeSingle();
@@ -147,7 +147,7 @@ export default function JobDetail() {
             const appNumber = generateApplicationNumber();
 
             const { error: insertError } = await supabase
-                .from("applications")
+                .from("EACapplications")
                 .insert([
                     {
                         application_number: appNumber,
