@@ -1,7 +1,7 @@
 -- Run this script in your Supabase SQL Editor for your newly linked project
 
 -- 1. Create the base table if it doesn't exist
-CREATE TABLE IF NOT EXISTS EACapplications (
+CREATE TABLE IF NOT EXISTS eacapplications (
   id uuid default gen_random_uuid() primary key,
   application_number text unique not null,
   email text not null,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS EACapplications (
 );
 
 -- 2. Add all the new columns to the table
-ALTER TABLE EACapplications
+ALTER TABLE eacapplications
 ADD COLUMN IF NOT EXISTS origin_country text,
 ADD COLUMN IF NOT EXISTS destination_country text,
 ADD COLUMN IF NOT EXISTS job_sector text,
@@ -26,4 +26,4 @@ ADD COLUMN IF NOT EXISTS remarks text,
 ADD COLUMN IF NOT EXISTS is_job_selected smallint default 0;
 
 -- Optional: Verify structure
--- SELECT * FROM EACapplications LIMIT 1;
+-- SELECT * FROM eacapplications LIMIT 1;

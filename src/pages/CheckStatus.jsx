@@ -52,7 +52,7 @@ export default function CheckStatus() {
     setSuccessMessage("");
 
     const { data, error } = await supabase
-      .from("EACapplications")
+      .from("eacapplications")
       .select("*")
       .or(`application_number.eq.${searchInput},phone.eq.${searchInput}`)
       .single();
@@ -103,7 +103,7 @@ export default function CheckStatus() {
     }
 
     const { error } = await supabase
-      .from("EACapplications")
+      .from("eacapplications")
       .update({
         interview_date: interviewDate,
         interview_time: interviewTime,
@@ -134,7 +134,7 @@ export default function CheckStatus() {
     setModalError("");
     
     const { error } = await supabase
-      .from("EACapplications")
+      .from("eacapplications")
       .update({
         job_sector: selectedCategory,
         job_subcategory: selectedSubJob,
