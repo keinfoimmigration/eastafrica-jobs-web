@@ -1,236 +1,744 @@
-/* Container */
-.check-status {
-    max-width: 900px;
-    margin: 3rem auto;
-    padding: 2.5rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+/* ============================================================
+   CheckStatus — Premium EAC-branded redesign
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ---- Page Shell ---- */
+.cs-page {
+  min-height: 100vh;
+  background: linear-gradient(150deg, #001f4d 0%, #003d8b 45%, #005c6b 100%);
+  font-family: 'Inter', sans-serif;
+  padding: 1.5rem 1rem 4rem;
+  max-width: 100%;
 }
 
-/* Header */
-.check-status-header h2 {
-    color: #003366;
-    font-size: 2rem;
-    border-bottom: 3px solid #0066cc;
-    padding-bottom: 0.75rem;
-    margin-bottom: 1rem;
+@media (min-width: 1024px) {
+  .cs-page {
+    padding-top: 4rem;
+  }
 }
 
-.instruction-text {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 1.5rem;
+/* ---- Toast ---- */
+.cs-toast {
+  position: fixed;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1aad54, #0d8a3e);
+  color: #fff;
+  padding: 0.85rem 1.6rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 9999;
+  animation: csToastIn 0.4s ease forwards, csToastOut 0.5s ease 4.5s forwards;
+  white-space: nowrap;
 }
 
-/* Form Inputs */
-.form-group input {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 6px;
-    border: 1px solid #ccd6dd;
-    font-size: 0.9rem;
+@keyframes csToastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes csToastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(-20px); }
 }
 
-/* Buttons */
-.primary-btn {
-    background-color: #003366;
-    color: #fff;
-    padding: 0.9rem 1.8rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
+/* ---- Hero Header ---- */
+.cs-hero {
+  text-align: center;
+  padding: 6.5rem 1rem 2.5rem; /* Better top clearance for fixed header */
+  position: relative;
 }
 
-.secondary-btn {
-    background-color: #dde3ea;
-    color: #003366;
-    padding: 0.9rem 1.8rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
+@media (min-width: 1024px) {
+  .cs-hero {
+    padding-top: 8.5rem;
+  }
 }
 
-/* Application Grid */
-.application-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.2rem;
-    margin-top: 2rem;
+.cs-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 1rem;
+  border-radius: 50px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  backdrop-filter: blur(8px);
 }
 
-.grid-item h4 {
-    margin-bottom: 0.3rem;
-    color: #003366;
+.cs-flag {
+  font-size: 1rem;
 }
 
-.grid-item p {
-    color: #555;
+.cs-hero-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
-/* Status Badges */
-.status-badge {
-    font-weight: 700;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    display: inline-block;
-    color: #fff;
+.cs-hero-sub {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.72);
+  max-width: 520px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
 }
 
-.status-submitted {
-    background: #777;
+.cs-system-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(26, 173, 84, 0.1);
+  border: 1px solid rgba(26, 173, 84, 0.3);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1aad54;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.status-pending {
-    background: #f0ad4e;
+.cs-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #1aad54;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(26, 173, 84, 0.7);
+  animation: csPulse 2s infinite;
 }
 
-.status-under-review {
-    background: #5bc0de;
+@keyframes csPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 173, 84, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(26, 173, 84, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 173, 84, 0); }
 }
 
-.status-interview {
-    background: #f0ad4e;
+/* ---- Container ---- */
+.cs-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 1.2rem;
 }
 
-.status-approved {
-    background: #28a745;
+/* ---- Search Card ---- */
+.cs-search-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-.status-rejected {
-    background: #dc3545;
+.cs-search-inner {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
 }
 
-.status-onhold {
-    background: #ffc107;
+.cs-input-wrap {
+  flex: 1;
+  position: relative;
 }
 
-.status-other {
-    background: #6c757d;
+.cs-input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  pointer-events: none;
 }
 
-/* Modal Overlay */
-.payment-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
+.cs-input {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 2.8rem;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.cs-input::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+.cs-input:focus {
+  border-color: rgba(255,216,0,0.7);
+  background: rgba(255,255,255,0.18);
+}
+
+/* ---- Primary Button ---- */
+.cs-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #ffd800, #f5a623);
+  color: #001f4d;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 0.9rem 1.6rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 16px rgba(245,166,35,0.4);
+}
+
+.cs-primary-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245,166,35,0.5);
+}
+
+.cs-primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cs-btn-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+
+.cs-primary-btn:hover .cs-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Spinner */
+.cs-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(0,31,77,0.3);
+  border-top-color: #001f4d;
+  border-radius: 50%;
+  animation: csSpin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes csSpin { to { transform: rotate(360deg); } }
+
+/* ---- Error Box ---- */
+.cs-error-box {
+  margin-top: 1rem;
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: #ffb3bb;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+/* ---- Result Card ---- */
+.cs-result-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: csCardIn 0.4s ease forwards;
+}
+
+@keyframes csCardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Status Banner ---- */
+.cs-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.5rem 2rem;
+  color: #fff;
+}
+
+.badge-submitted    { background: linear-gradient(135deg, #6c757d, #495057); }
+.badge-pending      { background: linear-gradient(135deg, #f0ad4e, #d68910); }
+.badge-review       { background: linear-gradient(135deg, #17a2b8, #0d7a8a); }
+.badge-interview    { background: linear-gradient(135deg, #fd7e14, #c76a0e); }
+.badge-approved     { background: linear-gradient(135deg, #28a745, #1a7a32); }
+.badge-rejected     { background: linear-gradient(135deg, #dc3545, #a71d2a); }
+.badge-onhold       { background: linear-gradient(135deg, #ffc107, #d39e00); }
+.badge-other        { background: linear-gradient(135deg, #6c757d, #495057); }
+
+.cs-status-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.cs-status-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+  margin: 0 0 0.2rem;
+}
+
+.cs-status-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Details Grid ---- */
+.cs-details-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Stacked on mobile */
+  gap: 0;
+  padding: 0.5rem 0;
+}
+
+@media (min-width: 480px) {
+  .cs-details-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+.cs-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #f0f4f8;
+  border-right: 1px solid #f0f4f8;
+}
+
+.cs-detail-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8a9ab0;
+}
+
+.cs-detail-value {
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: #1a2744;
+  word-break: break-all;
+}
+
+.cs-app-num {
+  font-family: 'Courier New', monospace;
+  background: #f0f6ff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  border: 1px solid #d0e3ff;
+  display: inline-block;
+}
+
+.cs-interview-highlight {
+  color: #1a7a32;
+  font-weight: 700;
+}
+
+/* ---- CTA Strip ---- */
+.cs-cta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, #f0f7ff, #e8f4fd);
+  border-top: 1px solid #d0e6fb;
+  padding: 1.4rem 2rem;
+  flex-wrap: wrap;
+}
+
+.cs-cta-title {
+  font-weight: 700;
+  color: #1a2744;
+  margin: 0 0 0.2rem;
+  font-size: 0.95rem;
+}
+
+.cs-cta-sub {
+  font-size: 0.82rem;
+  color: #5a6a80;
+  margin: 0;
+}
+
+/* ---- Progress Tracker ---- */
+.cs-progress-tracker {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  background: #fcfdfe;
+  border-bottom: 1px solid #f0f4f8;
+  position: relative;
+  overflow-x: auto; /* Allow scroll if content too wide */
+  gap: 1rem;
+}
+
+.cs-progress-tracker::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for cleaner look */
+}
+
+@media (min-width: 768px) {
+  .cs-progress-tracker {
+    padding: 2rem;
+    gap: 0;
+  }
+}
+
+.cs-progress-tracker::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 2rem;
+  right: 2rem;
+  height: 2px;
+  background: #e1e8f0;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.cs-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cs-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #e1e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #8a9ab0;
+  transition: all 0.3s ease;
+}
+
+.cs-step.active .cs-step-circle {
+  border-color: #ffd800;
+  color: #ffd800;
+  background: rgba(255, 216, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 216, 0, 0.4);
+}
+
+.cs-step.completed .cs-step-circle {
+  background: #1aad54;
+  border-color: #1aad54;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(26,173,84,0.3);
+}
+
+.cs-step.active .cs-step-label {
+  color: #ffd800;
+  font-weight: 800;
+}
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.cs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 15, 40, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  animation: csFadeIn 0.25s ease;
+}
+
+@keyframes csFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cs-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+  position: relative;
+  animation: csModalIn 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes csModalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+.cs-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f0f4f8;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #5a6a80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.cs-modal-close:hover {
+  background: #e0e8f0;
+}
+
+.cs-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.cs-modal-icon {
+  font-size: 1.8rem;
+}
+
+.cs-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a2744;
+}
+
+/* Steps list */
+.cs-steps {
+  background: #f5f9ff;
+  border: 1px solid #d8eaff;
+  border-radius: 12px;
+  padding: 1rem 1rem 1rem 2rem;
+  margin: 0 0 1.2rem;
+  font-size: 0.85rem;
+  color: #3a4d6a;
+  line-height: 1.8;
+}
+
+.cs-steps strong {
+  color: #1a2744;
+}
+
+/* Modal sections */
+.cs-modal-section {
+  margin-bottom: 1rem;
+}
+
+.cs-modal-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8a9ab0;
+  margin-bottom: 0.4rem;
+}
+
+.cs-modal-input-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.cs-modal-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #d8e4f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #1a2744;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.cs-modal-input:focus {
+  border-color: #0066cc;
+}
+
+.cs-modal-input:disabled {
+  background: #f5f7fa;
+  color: #aab5c0;
+  cursor: not-allowed;
+}
+
+.cs-verify-btn {
+  padding: 0.72rem 1.1rem;
+  border: 1.5px solid #0066cc;
+  border-radius: 10px;
+  background: #fff;
+  color: #0066cc;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+
+.cs-verify-btn:hover:not(:disabled) {
+  background: #0066cc;
+  color: #fff;
+}
+
+.cs-verify-done {
+  background: #e8f8ee;
+  border-color: #28a745;
+  color: #1a7a32;
+  cursor: default;
+}
+
+.cs-modal-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+/* Modal messages */
+.cs-modal-error {
+  font-size: 0.82rem;
+  color: #dc3545;
+  background: #fff5f6;
+  border: 1px solid #f8d7da;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0 0;
+}
+
+.cs-modal-success {
+  font-size: 0.82rem;
+  color: #1a7a32;
+  background: #f0fdf4;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0 0;
+}
+
+/* Modal Footer */
+.cs-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #f0f4f8;
+}
+
+.cs-outline-btn {
+  padding: 0.8rem 1.4rem;
+  border: 1.5px solid #d0dce8;
+  border-radius: 12px;
+  background: transparent;
+  color: #5a6a80;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.cs-outline-btn:hover {
+  border-color: #aab5c0;
+  color: #3a4a60;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .cs-search-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cs-primary-btn {
     justify-content: center;
-    z-index: 1000;
-    overflow-y: auto;
-    padding: 0.5rem;
-}
+  }
 
-/* Modal Box - Compact and Wider */
-.modal-content {
-    background: #fff;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
-    width: 400px; /* slightly wider */
-    max-width: 90%;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  .cs-details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cs-detail-item {
+    padding: 1rem 1.2rem;
+  }
+
+  .cs-status-banner {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .cs-cta-strip {
+    flex-direction: column;
     text-align: center;
-    line-height: 1.2;
+  }
+
+  .cs-modal-row2 {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-hero {
+    padding: 2.5rem 1rem 1.5rem;
+  }
 }
 
-/* Instruction Box */
-.modal-instruction {
-    font-size: 0.78rem;
-    color: #333;
-    text-align: left;
-    background: #f2f7fb;
-    padding: 0.4rem;
-    border-radius: 5px;
-    margin-bottom: 0.4rem;
-    line-height: 1.2;
+/* ---- Job Selection CTA ---- */
+.cs-job-cta {
+  background: linear-gradient(135deg, #fff9e6, #fff4d1);
+  border-top: 1px solid #ffeeba;
 }
 
-/* Modal Inputs */
-.modal-content input {
-    width: 100%;
-    padding: 0.4rem;
-    margin: 0.2rem 0;
-    border-radius: 5px;
-    border: 1px solid #ccd6dd;
-    font-size: 0.85rem;
+.cs-char-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a9ab0;
 }
 
-/* Payment Box */
-.payment-box {
-    background: #e6f0fa;
-    border-radius: 5px;
-    padding: 0.4rem;
-    margin-bottom: 0.4rem;
-    text-align: left;
+.cs-char-count.warning {
+  color: #dc3545;
 }
 
-/* Modal Buttons */
-.modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-    gap: 0.3rem;
+.cs-modal-textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
 }
 
-    .modal-buttons .primary-btn,
-    .modal-buttons .secondary-btn {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.83rem;
-        border-radius: 5px;
-    }
-
-/* Messages */
-.success-message,
-.error-message {
-    font-size: 0.78rem;
-    margin-top: 0.3rem;
-}
-
-/* Toast Notification - Top Center Slide */
-.toast-notification {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background-color: #28a745;
-    color: #fff;
-    padding: 0.8rem 1.2rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    font-weight: 700;
-    z-index: 2000;
-    opacity: 0;
-    animation: slideIn 0.4s forwards, slideOut 0.4s 3.6s forwards;
-}
-
-/* Slide In */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-/* Slide Out */
-@keyframes slideOut {
-    from {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-
-    to {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
-    }
+.cs-textarea-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

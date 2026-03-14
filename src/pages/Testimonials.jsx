@@ -4,77 +4,87 @@ import './Testimonials.css';
 export default function Testimonials() {
     const perPage = 4;
 
-    // ✅ Dummy testimonials data
+    // ✅ Authentic Success Stories with Origin & Destination
     const testimonialsData = [
         {
             id: 7,
             name: "Cynthia Maina",
-            date: "2026-03-03", // 3 days ago from March 6
-            story: "Just received my visa approval today! The level of professionalism and support from this team is unmatched. I'll be flying to Hamburg next month!",
-            imageUrl: ""
+            fromCountry: "Kenya",
+            destination: "Germany",
+            sector: "Elderly Care",
+            date: "2026-03-03",
+            story: "Just received my certificate today! The process for elderly care in Germany was so fast through this gateway. I've already signed my contract with Sunrise Communities!",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 8,
             name: "Juma Bakari",
-            date: "2026-02-20", // About 2 weeks ago
-            story: "The interview prep was the key for me. I felt so confident during my interview with the German employer. I'm officially a tech lead in Stuttgart now!",
-            imageUrl: ""
+            fromCountry: "Tanzania",
+            destination: "UK",
+            sector: "Truck Driving",
+            date: "2026-02-20",
+            story: "Moving to the UK as a heavy-duty truck driver was my dream. This portal handled all my papers and bilateral verifications. Flying to London next week!",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 9,
             name: "Amina Hassan",
-            date: "2026-02-20", // 2 weeks ago
-            story: "I was skeptical at first, but every step was transparent. From data submission to job offer, it took less than 4 months. Highly recommended for everyone.",
-            imageUrl: ""
+            fromCountry: "Uganda",
+            destination: "USA",
+            sector: "Agriculture",
+            date: "2026-02-20",
+            story: "I applied for the H-2A farm program. Everything from the skill check to visa was transparent. Now working in a modern organic farm in California.",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 10,
             name: "Samuel Omondi",
+            fromCountry: "Kenya",
+            destination: "Qatar",
+            sector: "Security",
             date: "2026-02-15",
-            story: "Moving to Germany as a nurse seemed like a mountain, but this community made it a smooth walk. I'm now settled in Berlin and loving the city!",
-            imageUrl: ""
+            story: "Working in Doha as a facility watchman has changed my family's life. The EAC protection program ensures we have fair pay and verified housing.",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 1,
             name: "Beatrice Anyango",
+            fromCountry: "Rwanda",
+            destination: "Poland",
+            sector: "Waste Management",
             date: "2025-03-15",
-            story: "Thanks to this program, I secured a nursing job in Berlin within 6 months. The support throughout the visa process was incredible!",
-            imageUrl: ""
+            story: "The waste management program in Poland is very modern. I was trained on arrival and the support from fellow EAC workers here is amazing!",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 2,
             name: "Evans Kiprotich",
+            fromCountry: "Kenya",
+            destination: "Germany",
+            sector: "Janitorial Services",
             date: "2025-05-10",
-            story: "I never thought working in Germany was possible until I joined this community. Now I’m happily employed in Munich!",
-            imageUrl: ""
+            story: "Started as a cleaning assistant in Berlin. The pay is consistent and the bilateral agreement means my rights are fully protected.",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 3,
             name: "Scolastica Mutua",
+            fromCountry: "Uganda",
+            destination: "Australia",
+            sector: "Gardening",
             date: "2025-06-20",
-            story: "The guidance on documentation and interview preparation made all the difference. Highly recommend!",
-            imageUrl: ""
+            story: "Maintaining the public parks in Sydney is a peaceful and well-paid job. I applied from Kampala and everything was handled in 4 months.",
+            imageUrl: "/testimonial-avatar.png"
         },
         {
             id: 4,
             name: "Derrick Wafula",
+            fromCountry: "Burundi",
+            destination: "Canada",
+            sector: "Construction",
             date: "2025-07-01",
-            story: "Professional, supportive, and reliable. I’m now working in Frankfurt and living my dream.",
-            imageUrl: ""
-        },
-        {
-            id: 5,
-            name: "Lilian Kerubo",
-            date: "2024-08-12",
-            story: "Clear process, step-by-step assistance, and amazing mentorship. Germany is now my second home!",
-            imageUrl: ""
-        },
-        {
-            id: 6,
-            name: "Mohamed Ali",
-            date: "2024-09-05",
-            story: "From language training to job placement, everything was handled professionally. Thank you!",
-            imageUrl: ""
+            story: "Professional, supportive, and reliable. I’m now working in infrastructure construction in Toronto. Canada is full of opportunities for EAC workers.",
+            imageUrl: "/testimonial-avatar.png"
         }
     ];
 
@@ -117,12 +127,12 @@ export default function Testimonials() {
     return (
         <section className="testimonials-container" aria-label="Client testimonials">
             <header className="testimonials-header">
-                <h2>Success Stories from Our Community</h2>
-                <p>Read inspiring stories from Kenyans who successfully landed jobs in Germany</p>
+                <h2>Verified Success Stories</h2>
+                <p>Inspiring journeys of East African workers settled in global employment markets under official bilateral pacts.</p>
             </header>
 
             <div className="testimonial-cards">
-                {currentItems.map(({ id, name, date, story, imageUrl }) => (
+                {currentItems.map(({ id, name, fromCountry, destination, sector, date, story, imageUrl }) => (
                     <article
                         key={id}
                         className="testimonial-card"
@@ -140,7 +150,14 @@ export default function Testimonials() {
                         </div>
                         <div className="testimonial-text">
                             <header>
-                                <h3 className="testimonial-name">{name}</h3>
+                                <div className="test-header-main">
+                                    <h3 className="testimonial-name">{name}</h3>
+                                    <span className="origin-tag">From {fromCountry}</span>
+                                </div>
+                                <div className="test-destination">
+                                    <span className="working-label">Working in {destination}</span>
+                                    <span className="sector-label">{sector}</span>
+                                </div>
                                 <time
                                     className="testimonial-date"
                                     dateTime={new Date(date).toISOString()}

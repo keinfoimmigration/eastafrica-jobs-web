@@ -1,0 +1,113 @@
+/* EAC Theme Styling */
+.navbar-header {
+    background: #FFFFFF;
+}
+
+.nav-ticker-strip {
+    background: var(--eac-blue);
+}
+
+.nav-container {
+    border-color: var(--border-strong);
+    background: var(--glass-bg);
+}
+
+.logo-main {
+    color: var(--eac-blue);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--eac-green);
+    border-bottom-color: var(--eac-green);
+}
+
+.nav-cta {
+    background: var(--eac-green);
+}
+
+.nav-cta:hover {
+    background: var(--eac-navy);
+}
+
+/* Home Section Overrides */
+.text-highlight {
+    color: var(--eac-yellow);
+    background: none;
+    -webkit-text-fill-color: initial;
+}
+
+.cta-button.primary {
+    background: var(--eac-green);
+    box-shadow: 0 10px 20px rgba(21, 128, 61, 0.2);
+}
+
+.stat-value {
+    color: var(--eac-green);
+}
+
+.destination-card {
+    background: var(--eac-blue);
+}
+
+.labor-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.card-cta {
+    color: var(--eac-green);
+}
+
+.footer-authority {
+    background: var(--eac-blue);
+}
+
+.dest-flag {
+    height: 32px;
+    width: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dest-count {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--eac-yellow);
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.location-badge-top {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--glass-bg);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    z-index: 2;
+}
+
+.location-badge-top img {
+    height: 16px;
+    border-radius: 2px;
+}
+
+.job-category-tag {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--eac-navy);
+    color: #fff;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+}

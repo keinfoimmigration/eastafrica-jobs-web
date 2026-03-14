@@ -2,77 +2,83 @@ import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 
+const EAC_FLAGS = [
+    { code: "ke", name: "Kenya" },
+    { code: "ug", name: "Uganda" },
+    { code: "tz", name: "Tanzania" },
+    { code: "rw", name: "Rwanda" },
+    { code: "bi", name: "Burundi" },
+    { code: "ss", name: "South Sudan" },
+    { code: "cd", name: "DRC" },
+    { code: "so", name: "Somalia" }
+];
+
+const getFlagUrl = (code) => `https://flagcdn.com/w40/${code}.png`;
+
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const closeMenu = () => setIsOpen(false);
-
-    // Automatically close mobile menu on route change
     useEffect(() => {
-        setIsOpen(false);
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        setIsMenuOpen(false);
     }, [location]);
 
     return (
-        <header className="navbar">
-            <div className="navbar-container">
+        <header className={`navbar-header ${isScrolled ? 'is-scrolled' : ''}`}>
+            {/* EAC Flag Ticker */}
+            <div className="nav-ticker-strip">
+                <div className="ticker-wrapper">
+                    {EAC_FLAGS.map((flag, i) => (
+                        <div key={i} className="ticker-item">
+                            <img src={getFlagUrl(flag.code)} alt={flag.name} referrerPolicy="no-referrer" />
+                        </div>
+                    ))}
+                    {EAC_FLAGS.map((flag, i) => (
+                        <div key={`dup-${i}`} className="ticker-item">
+                            <img src={getFlagUrl(flag.code)} alt={flag.name} referrerPolicy="no-referrer" />
+                        </div>
+                    ))}
+                </div>
+                <div className="verified-pulse">
+                    <span className="pulse-dot"></span>
+                    OFFICIAL EAST AFRICAN COMMUNITY
+                </div>
+            </div>
 
-                {/* BRAND */}
-                <Link to="/" className="navbar-brand">
-                    <img
-                        src="/kenya-gov-logo.png"
-                        alt="Germany Kenya Job Portal Logo"
-                        className="nav-logo"
-                    />
-                    <span className="brand-text">
-                        Germany–Kenya
-                        <small>Job Portal</small>
-                    </span>
+            <div className="nav-container">
+
+                <Link to="/" className="nav-logo">
+                    <img src="https://www.eac.int/images/25_Anniversary_web_Banner_2.PNG" alt="EAC 25th Anniversary Official Emblem" className="logo-img" />
+                    <div className="logo-text">
+                        <span className="logo-main">EAST AFRICAN COMMUNITY</span>
+                        <span className="logo-tag">Official Community Gateway</span>
+                    </div>
                 </Link>
 
-                {/* HAMBURGER */}
-                <button
-                    className={`hamburger ${isOpen ? "open" : ""}`}
-                    onClick={() => setIsOpen(!isOpen)}
-                    aria-label="Toggle navigation"
+                <button 
+                    className={`nav-toggle ${isMenuOpen ? 'open' : ''}`}
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
 
-                {/* MENU */}
-                <nav className={`navbar-menu ${isOpen ? "active" : ""}`}>
-
-                    <NavLink
-                        to="/testimonials"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-link active" : "navbar-link"
-                        }
-                    >
-                        Testimonials
-                    </NavLink>
-
-                    <NavLink
-                        to="/checkstatus"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-link active" : "navbar-link"
-                        }
-                    >
-                        Check Status
-                    </NavLink>
-
-                    <NavLink
-                        to="/jobdetail"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-cta active-cta" : "navbar-cta"
-                        }
-                    >
-                        Apply Now
-                    </NavLink>
-
+                <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+                    <NavLink to="/jobs" className="nav-link">Opportunities</NavLink>
+                    <NavLink to="/testimonials" className="nav-link">Success Stories</NavLink>
+                    <NavLink to="/checkstatus" className="nav-link">Track Status</NavLink>
+                    <Link to="/jobdetail" className="nav-cta">Apply Now</Link>
                 </nav>
-
             </div>
         </header>
     );

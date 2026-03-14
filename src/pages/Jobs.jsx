@@ -1,132 +1,156 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { generateJobs } from '../utils/jobData';
 import './Jobs.css';
 
-export default function Jobs() {
-    const [jobs, setJobs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const ALL_JOBS = generateJobs();
 
-    // Pagination state
+const getFlagUrl = (code) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+
+export default function Jobs() {
+    const [searchParams] = useSearchParams();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCountry, setSelectedCountry] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
-    const jobsPerPage = 5;
+    const jobsPerPage = 12;
 
     useEffect(() => {
-        let isMounted = true;
+        const countryFromUrl = searchParams.get('country');
+        if (countryFromUrl) {
+            setSelectedCountry(countryFromUrl);
+        } else {
+            setSelectedCountry('All');
+        }
+    }, [searchParams]);
 
-        fetch('https://localhost:44369/api/jobs')
-            .then((res) => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json();
-            })
-            .then((data) => {
-                if (isMounted) {
-                    setJobs(data);
-                    setLoading(false);
-                }
-            })
-            .catch((err) => {
-                if (isMounted) {
-                    console.error('Failed to load jobs:', err);
-                    setError('Failed to load job listings. Please try again later.');
-                    setLoading(false);
-                }
-            });
+    const filteredJobs = useMemo(() => {
+        return ALL_JOBS.filter(job => {
+            const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 job.type.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCountry = selectedCountry === 'All' || job.location === selectedCountry;
+            return matchesSearch && matchesCountry;
+        });
+    }, [searchTerm, selectedCountry]);
 
-        return () => { isMounted = false; };
-    }, []);
-
-    const countryFlags = {
-        Germany: '🇩🇪',
-        Kenya: '🇰🇪',
-    };
-
-    if (loading) {
-        return (
-            <div className="jobs">
-                <p className="loading-message">{error || 'Loading available positions...'}</p>
-            </div>
-        );
-    }
-
-    // Pagination logic
-    const indexOfLastJob = currentPage * jobsPerPage;
-    const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-    const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
-    const totalPages = Math.ceil(jobs.length / jobsPerPage);
+    const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+    const currentJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
     const handleNext = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handlePrev = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const countries = ['All', ...new Set(ALL_JOBS.map(j => j.location))].sort();
+
     return (
-        <div className="jobs">
-            <div className="jobs-header">
-                <h2>Open Positions in Germany</h2>
-                <p>Browse {jobs.length} opportunities for qualified Kenyan professionals</p>
-            </div>
+        <div className="jobs-page">
+            <header className="page-header">
+                <div className="container">
+                    <span className="header-tag">Live EAC Migration Pool</span>
+                    <h1>Global Employment <span className="text-highlight">Marketplace</span></h1>
+                    <p>Access <strong>{ALL_JOBS.length}</strong> verified opportunities across top bilateral partner countries.</p>
+                </div>
+            </header>
 
-            {error && <div className="error-message">{error}</div>}
+            <section className="marketplace-filters">
+                <div className="filter-container">
+                    <div className="search-box">
+                        <input 
+                            type="text" 
+                            placeholder="Search by role or sector (e.g. Healthcare)..." 
+                            value={searchTerm}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        />
+                    </div>
+                    <div className="country-filter">
+                        <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setCurrentPage(1); }}>
+                            {countries.map(c => <option key={c} value={c}>{c === 'All' ? 'All Partner Countries' : c}</option>)}
+                        </select>
+                    </div>
+                </div>
+            </section>
 
-            {jobs.length === 0 ? (
-                <p className="no-jobs">No jobs posted at the moment.</p>
-            ) : (
-                <>
-                    <ul className="job-list">
-                        {currentJobs.map((job) => (
-                            <li key={job.id} className="job-item">
-                                <img
-                                    src={job.imageUrl || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop'}
-                                    alt={job.title}
-                                    className="job-image"
-                                    onError={(e) => {
-                                        if (!e.target.dataset.fallback) {
-                                            e.target.src = 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop';
-                                            e.target.dataset.fallback = true;
-                                        }
-                                    }}
-                                />
-                                <div className="job-content">
-                                    <h3 className="job-title">{job.title}</h3>
-                                    <p className="job-location">
-                                        📍 {job.location} {countryFlags[job.location] || ''}
-                                    </p>
-                                    <p className="job-description">
-                                        {job.description.length > 120 ? `${job.description.slice(0, 120)}...` : job.description}
-                                    </p>
-                                    {/*{job.requirements && (*/}
-                                    {/*    <div className="job-requirements">*/}
-                                    {/*        <strong>Requirements:</strong>*/}
-                                    {/*        <p>{job.requirements}</p>*/}
-                                    {/*    </div>*/}
-                                    {/*)}*/}
-                                    <p className="salary">
-                                        💰 {job.salary ? `€${job.salary.toLocaleString()}/year` : 'Not disclosed'}
-                                    </p>
-                                    <Link
-                                        to={`/jobs/${job.id}`}
-                                        className="apply-button"
-                                        aria-label={`View details and apply for ${job.title}`}
+            <section className="marketplace-section">
+                <div className="marketplace-meta">
+                    <p>Showing <strong>{filteredJobs.length}</strong> opportunities matching your criteria</p>
+                </div>
+
+                <div className="jobs-grid">
+                    {currentJobs.map((job) => (
+                        <div key={job.id} className="professional-job-card">
+                            <div className="card-hero">
+                                <img src={job.image} alt={job.title} className="hero-img" loading="lazy" />
+                                <div className="job-category-shelf">{job.type}</div>
+                                <div className="location-overlay">
+                                    <img src={getFlagUrl(job.flag)} alt={job.location} />
+                                    <span>{job.location}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="card-content">
+                                <div className="ref-strip">
+                                    <span className="ref-id">{job.refId}</span>
+                                    <span className="agreement-badge">{job.agreement}</span>
+                                </div>
+                                <div className="company-tag">{job.company}</div>
+                                <h3 className="job-title">{job.title}</h3>
+                                
+                                <div className="metadata-specs">
+                                    <div className="spec-item">
+                                        <span className="spec-label">Processing</span>
+                                        <span className="spec-value">{job.processingTime}</span>
+                                    </div>
+                                    <div className="spec-item">
+                                        <span className="spec-label">Contract</span>
+                                        <span className="spec-value">{job.contractDuration}</span>
+                                    </div>
+                                    <div className="spec-item">
+                                        <span className="spec-label">Housing</span>
+                                        <span className="spec-value">Verified</span>
+                                    </div>
+                                </div>
+
+                                <div className="job-overview">
+                                    <span className="overview-label">Official Job Overview</span>
+                                    <p className="job-excerpt">{job.description}</p>
+                                </div>
+                                
+                                <div className="verification-pact">
+                                    <span className="v-check">✓ Verified by EAC Labor Ministry</span>
+                                    <span className="v-check">✓ Portability Guaranteed</span>
+                                </div>
+
+                                <div className="card-footer">
+                                    <div className="salary-block">
+                                        <span className="s-label">Institutional Monthly Pay</span>
+                                        <span className="s-value">${job.salary.toLocaleString()}</span>
+                                    </div>
+                                    <Link 
+                                        to="/jobdetail" 
+                                        state={{ selectedJob: job }}
+                                        className="pro-apply-btn"
                                     >
-                                        View Details & Apply →
+                                        Begin Application
                                     </Link>
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
-                    {/* Pagination */}
-                    <div className="pagination">
-                        <button onClick={handlePrev} disabled={currentPage === 1}>← Previous</button>
-                        <span>Page {currentPage} of {totalPages}</span>
-                        <button onClick={handleNext} disabled={currentPage === totalPages}>Next →</button>
+                {totalPages > 1 && (
+                    <div className="pro-pagination">
+                        <button onClick={handlePrev} disabled={currentPage === 1} className="p-btn">Previous</button>
+                        <span className="p-info">Page {currentPage} of {totalPages}</span>
+                        <button onClick={handleNext} disabled={currentPage === totalPages} className="p-btn">Next</button>
                     </div>
-                </>
-            )}
+                )}
+            </section>
         </div>
     );
 }
