@@ -48,106 +48,149 @@ export default function Jobs() {
     const countries = ['All', ...new Set(ALL_JOBS.map(j => j.location))].sort();
 
     return (
-        <div className="jobs-page">
-            <header className="page-header">
-                <div className="container">
-                    <span className="header-tag">Live EAC Migration Pool</span>
-                    <h1>Global Employment <span className="text-highlight">Marketplace</span></h1>
-                    <p>Access <strong>{ALL_JOBS.length}</strong> verified opportunities across top bilateral partner countries.</p>
+        <div className="jobs-page-modern">
+            {/* Premium Hero Section */}
+            <header className="jobs-hero-modern">
+                <div className="jobs-hero-bg-anim"></div>
+                <div className="jobs-hero-content">
+                    <div className="jobs-hero-badge">
+                        <span className="pulse-dot"></span> EAC Global Employment Pool
+                    </div>
+                    <h1 className="jobs-hero-title">
+                        Discover Your <span className="highlight-text">Future</span> Abroad
+                    </h1>
+                    <p className="jobs-hero-subtitle">
+                        Access <strong>{ALL_JOBS.length}</strong> official, verified career opportunities across our bilateral partner nations. Premium placements with guaranteed portabillity.
+                    </p>
                 </div>
             </header>
 
-            <section className="marketplace-filters">
-                <div className="filter-container">
-                    <div className="search-box">
+            {/* Floating Glassmorphic Filter Bar */}
+            <section className="jobs-filter-section">
+                <div className="jobs-filter-glass">
+                    <div className="filter-group-modern search-group">
+                        <span className="filter-icon">🔍</span>
                         <input 
                             type="text" 
-                            placeholder="Search by role or sector (e.g. Healthcare)..." 
+                            className="filter-input-modern"
+                            placeholder="Search roles, sectors, or keywords..." 
                             value={searchTerm}
                             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                         />
                     </div>
-                    <div className="country-filter">
-                        <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setCurrentPage(1); }}>
-                            {countries.map(c => <option key={c} value={c}>{c === 'All' ? 'All Partner Countries' : c}</option>)}
+                    <div className="filter-divider"></div>
+                    <div className="filter-group-modern select-group">
+                        <span className="filter-icon">🌍</span>
+                        <select 
+                            className="filter-select-modern"
+                            value={selectedCountry} 
+                            onChange={(e) => { setSelectedCountry(e.target.value); setCurrentPage(1); }}
+                        >
+                            {countries.map(c => <option key={c} value={c}>{c === 'All' ? 'All Destinations' : c}</option>)}
                         </select>
                     </div>
                 </div>
+                
+                <div className="jobs-results-meta">
+                    Showing <strong>{filteredJobs.length}</strong> verified opportunities
+                </div>
             </section>
 
-            <section className="marketplace-section">
-                <div className="marketplace-meta">
-                    <p>Showing <strong>{filteredJobs.length}</strong> opportunities matching your criteria</p>
-                </div>
-
-                <div className="jobs-grid">
-                    {currentJobs.map((job) => (
-                        <div key={job.id} className="professional-job-card">
-                            <div className="card-hero">
-                                <img src={job.image} alt={job.title} className="hero-img" loading="lazy" />
-                                <div className="job-category-shelf">{job.type}</div>
-                                <div className="location-overlay">
-                                    <img src={getFlagUrl(job.flag)} alt={job.location} />
-                                    <span>{job.location}</span>
-                                </div>
-                            </div>
-                            
-                            <div className="card-content">
-                                <div className="ref-strip">
-                                    <span className="ref-id">{job.refId}</span>
-                                    <span className="agreement-badge">{job.agreement}</span>
-                                </div>
-                                <div className="company-tag">{job.company}</div>
-                                <h3 className="job-title">{job.title}</h3>
-                                
-                                <div className="metadata-specs">
-                                    <div className="spec-item">
-                                        <span className="spec-label">Processing</span>
-                                        <span className="spec-value">{job.processingTime}</span>
+            {/* Main Job Grid */}
+            <section className="jobs-grid-section">
+                {filteredJobs.length === 0 ? (
+                     <div className="no-jobs-found">
+                         <span className="no-jobs-icon">📭</span>
+                         <h3>No matching opportunities found</h3>
+                         <p>Adjust your search criteria or explore all destinations.</p>
+                         <button className="reset-search-btn" onClick={() => { setSearchTerm(''); setSelectedCountry('All'); }}>
+                             View All Jobs
+                         </button>
+                     </div>
+                ) : (
+                    <div className="modern-jobs-grid">
+                        {currentJobs.map((job) => (
+                            <div key={job.id} className="modern-job-card">
+                                {/* Card Header Image Area */}
+                                <div className="modern-card-header">
+                                    <img src={job.image} alt={job.title} className="modern-hero-img" loading="lazy" />
+                                    <div className="modern-card-overlay"></div>
+                                    <div className="modern-sector-badge">{job.type}</div>
+                                    <div className="modern-location-badge">
+                                        <img src={getFlagUrl(job.flag)} alt={job.location} className="modern-flag" />
+                                        <span>{job.location}</span>
                                     </div>
-                                    <div className="spec-item">
-                                        <span className="spec-label">Contract</span>
-                                        <span className="spec-value">{job.contractDuration}</span>
-                                    </div>
-                                    <div className="spec-item">
-                                        <span className="spec-label">Housing</span>
-                                        <span className="spec-value">Verified</span>
-                                    </div>
-                                </div>
-
-                                <div className="job-overview">
-                                    <span className="overview-label">Official Job Overview</span>
-                                    <p className="job-excerpt">{job.description}</p>
                                 </div>
                                 
-                                <div className="verification-pact">
-                                    <span className="v-check">✓ Verified by EAC Labor Ministry</span>
-                                    <span className="v-check">✓ Portability Guaranteed</span>
+                                {/* Card Body */}
+                                <div className="modern-card-body">
+                                    <div className="modern-ref-bar">
+                                        <span className="modern-ref-id">REF: {job.refId}</span>
+                                        <span className="modern-company">🏛️ {job.company}</span>
+                                    </div>
+                                    
+                                    <h3 className="modern-job-title" title={job.title}>{job.title}</h3>
+                                    
+                                    {/* Quick Specs inline */}
+                                    <div className="modern-specs-row">
+                                        <div className="modern-spec">
+                                            <span className="spec-icn">⏱️</span> {job.processingTime} processing
+                                        </div>
+                                        <div className="modern-spec">
+                                            <span className="spec-icn">📜</span> {job.contractDuration}
+                                        </div>
+                                        <div className="modern-spec">
+                                            <span className="spec-icn">🏠</span> Housing Verified
+                                        </div>
+                                    </div>
+
+                                    <p className="modern-job-excerpt">{job.description}</p>
+                                    
+                                    <div className="modern-verification-box">
+                                        <div><span className="check-icon">✓</span> Official Bilateral Agreement</div>
+                                    </div>
                                 </div>
 
-                                <div className="card-footer">
-                                    <div className="salary-block">
-                                        <span className="s-label">Institutional Monthly Pay</span>
-                                        <span className="s-value">${job.salary.toLocaleString()}</span>
+                                {/* Card Footer */}
+                                <div className="modern-card-footer">
+                                    <div className="modern-salary-box">
+                                        <span className="salary-lbl">Est. Monthly Pay</span>
+                                        <span className="salary-val">${job.salary.toLocaleString()}</span>
                                     </div>
+                                    
                                     <Link 
                                         to="/jobdetail" 
                                         state={{ selectedJob: job }}
-                                        className="pro-apply-btn"
+                                        className="modern-apply-btn"
                                     >
-                                        Begin Application
+                                        Apply Now <span className="btn-arrow">→</span>
                                     </Link>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
 
+                {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="pro-pagination">
-                        <button onClick={handlePrev} disabled={currentPage === 1} className="p-btn">Previous</button>
-                        <span className="p-info">Page {currentPage} of {totalPages}</span>
-                        <button onClick={handleNext} disabled={currentPage === totalPages} className="p-btn">Next</button>
+                    <div className="modern-pagination">
+                        <button 
+                            className="modern-page-btn" 
+                            onClick={handlePrev} 
+                            disabled={currentPage === 1}
+                        >
+                            ← Previous
+                        </button>
+                        <div className="modern-page-info">
+                            Page <span>{currentPage}</span> of {totalPages}
+                        </div>
+                        <button 
+                            className="modern-page-btn" 
+                            onClick={handleNext} 
+                            disabled={currentPage === totalPages}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </section>
