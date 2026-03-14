@@ -25,6 +25,11 @@ export default function JobDetail() {
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
     
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpCode, setOtpCode] = useState("");
+    const [isVerified, setIsVerified] = useState(false);
+    const [verifying, setVerifying] = useState(false);
+    
     const EAC_COUNTRIES = [
         "Kenya", "Tanzania", "Uganda", "Rwanda", "Burundi", "South Sudan", "DRC", "Somalia"
     ];
@@ -100,6 +105,120 @@ export default function JobDetail() {
         }
         setError("");
         setCurrentStep(2);
+    };
+
+    const handleSendOtp = async () => {
+        if (!formData.email || !formData.phone) {
+            setError("Email address and mobile number are required for verification.");
+            return;
+        }
+
+        try {
+            setSaving(true);
+            setError("");
+            
+            const fullPhone = `${formData.countryCode}${formData.phone}`;
+            const { data: existingApp, error: fetchError } = await supabase
+                .from("eacapplications")
+                .select("email, phone")
+                .or(`email.eq.${formData.email},phone.eq.${fullPhone}`)
+                .maybeSingle();
+
+            if (fetchError) {
+                setError("Verification failed. Please try again.");
+                setSaving(false);
+                return;
+            }
+
+            if (existingApp) {
+                let message = "An application with these details already exists.";
+                if (existingApp.email === formData.email && existingApp.phone === fullPhone) {
+                    message = "An application with this email and phone number already exists.";
+                } else if (existingApp.email === formData.email) {
+                    message = "An application with this email address already exists.";
+                } else {
+                    message = "An application with this mobile number already exists.";
+                }
+
+                Swal.fire({
+                    title: "Duplicate Application",
+                    text: message,
+                    icon: "warning",
+                    confirmButtonColor: "#003366"
+                });
+
+                setSaving(false);
+                return;
+            }
+
+            const response = await fetch("/api/send-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: formData.email })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Failed to send verification code.");
+                setSaving(false);
+                return;
+            }
+
+            setOtpSent(true);
+            setSaving(false);
+            Swal.fire({
+                title: "Code Sent!",
+                text: "A 6-digit verification code has been sent to your email. It will expire in 10 minutes.",
+                icon: "info",
+                confirmButtonColor: "#003366"
+            });
+        } catch (err) {
+            console.error(err);
+            setError("Network error. Could not send code.");
+            setSaving(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        if (!otpCode || otpCode.length !== 6) {
+            setError("Please enter the 6-digit code.");
+            return;
+        }
+
+        try {
+            setVerifying(true);
+            setError("");
+
+            const response = await fetch("/api/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: formData.email, code: otpCode })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Verification failed.");
+                setVerifying(false);
+                return;
+            }
+
+            setIsVerified(true);
+            setVerifying(false);
+            Swal.fire({
+                title: "Verified!",
+                text: "Your email has been successfully verified.",
+                icon: "success",
+                confirmButtonColor: "#10b981",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } catch (err) {
+            console.error(err);
+            setError("Network error. Could not verify code.");
+            setVerifying(false);
+        }
     };
 
     const saveApplication = async () => {
@@ -420,6 +539,7 @@ export default function JobDetail() {
                                     placeholder="yourname@official.com"
                                     value={formData.email}
                                     onChange={handleInputChange}
+                                    disabled={isVerified || otpSent}
                                 />
                             </div>
 
@@ -431,6 +551,7 @@ export default function JobDetail() {
                                         value={formData.countryCode}
                                         onChange={handleInputChange}
                                         className="jd-country-code"
+                                        disabled={isVerified || otpSent}
                                     >
                                         {Object.entries(countryFlags).map(([code, flag]) => (
                                             <option key={code} value={code}>
@@ -444,19 +565,70 @@ export default function JobDetail() {
                                         value={formData.phone}
                                         onChange={handleInputChange}
                                         placeholder="712 345 678"
+                                        disabled={isVerified || otpSent}
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="jd-divider"></div>
+                        {!isVerified && (
+                            <div className="jd-verification-box" style={{ marginTop: '20px', padding: '20px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                {!otpSent ? (
+                                    <div style={{ textAlign: 'center' }}>
+                                        <p style={{ marginBottom: '15px', color: '#475569', fontSize: '14px' }}>Please verify your email to proceed to document upload.</p>
+                                        <button 
+                                            className="jd-primary-btn" 
+                                            onClick={handleSendOtp}
+                                            disabled={saving}
+                                            style={{ width: 'auto', padding: '10px 24px' }}
+                                        >
+                                            {saving ? "Sending Code..." : "Verify Email & Phone"}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div style={{ textAlign: 'center' }}>
+                                        <p style={{ marginBottom: '15px', color: '#475569', fontSize: '14px' }}>
+                                            Enter the 6-digit code sent to <strong>{formData.email}</strong>
+                                        </p>
+                                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '15px' }}>
+                                            <input 
+                                                type="text" 
+                                                maxLength="6" 
+                                                placeholder="000000"
+                                                value={otpCode}
+                                                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                                                style={{ width: '120px', textAlign: 'center', letterSpacing: '3px', fontSize: '18px', padding: '10px', border: '2px solid #cbd5e1', borderRadius: '8px' }}
+                                            />
+                                            <button 
+                                                className="jd-primary-btn" 
+                                                onClick={handleVerifyOtp}
+                                                disabled={verifying || otpCode.length !== 6}
+                                                style={{ width: 'auto', padding: '10px 24px' }}
+                                            >
+                                                {verifying ? "Verifying..." : "Confirm Code"}
+                                            </button>
+                                        </div>
+                                        <button 
+                                            onClick={() => setOtpSent(false)}
+                                            style={{ background: 'none', border: 'none', color: '#003366', textDecoration: 'underline', cursor: 'pointer', fontSize: '12px' }}
+                                        >
+                                            Change Email / Resend Code
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
-                        <div className="jd-card-header">
-                            <span className="jd-card-icon">📂</span>
-                            <h3>Required Documentation (Official Copy)</h3>
-                        </div>
+                        {isVerified && (
+                            <>
+                                <div className="jd-divider"></div>
 
-                        <div className="jd-upload-grid">
+                                <div className="jd-card-header">
+                                    <span className="jd-card-icon">📂</span>
+                                    <h3>Required Documentation (Official Copy)</h3>
+                                </div>
+
+                                <div className="jd-upload-grid">
                             <div className="jd-upload-item">
                                 <label>National ID / Passport (Front) *</label>
                                 <div className="jd-file-input-wrap">
@@ -486,21 +658,25 @@ export default function JobDetail() {
                             <button className="jd-secondary-btn" onClick={() => setCurrentStep(1)}>
                                 Back
                             </button>
-                            <button
-                                className="jd-primary-btn"
-                                onClick={submitApplication}
-                                disabled={saving}
-                            >
-                                {saving ? (
-                                    <>
-                                        <span className="jd-spinner"></span>
-                                        <span>Processing Submission...</span>
-                                    </>
-                                ) : (
-                                    "Complete Official Submission"
-                                )}
-                            </button>
+                            {isVerified && (
+                                <button
+                                    className="jd-primary-btn"
+                                    onClick={submitApplication}
+                                    disabled={saving}
+                                >
+                                    {saving ? (
+                                        <>
+                                            <span className="jd-spinner"></span>
+                                            <span>Processing Submission...</span>
+                                        </>
+                                    ) : (
+                                        "Complete Official Submission"
+                                    )}
+                                </button>
+                            )}
                         </div>
+                            </>
+                        )}
                     </section>
                 )}
 

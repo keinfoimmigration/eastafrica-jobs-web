@@ -27,3 +27,11 @@ ADD COLUMN IF NOT EXISTS is_job_selected smallint default 0;
 
 -- Optional: Verify structure
 -- SELECT * FROM eacapplications LIMIT 1;
+
+-- 3. Create table for handling email OTP verifications
+CREATE TABLE IF NOT EXISTS otps (
+  email text primary key,
+  code text not null,
+  expires_at timestamp with time zone not null,
+  created_at timestamp with time zone default now()
+);
