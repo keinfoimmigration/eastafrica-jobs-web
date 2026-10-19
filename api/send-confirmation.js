@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   });
 
   const mailOptions = {
-    from: `"East African Community" <${process.env.EMAIL_USER}>`,
+    from: { name: "East African Community", address: process.env.EMAIL_USER },
     to: email,
     subject: `Official Application Received - ${applicationNumber}`,
     text: `Hello,\n\nThank you for applying through the official East African Community Portal! We have successfully received your application.\n\nYour Application Number is: ${applicationNumber}\n\nYou can track your application status on our official portal at any time. We look forward to assisting your employment journey within our partner countries!\n\nBest regards,\nEast African Community Team`,

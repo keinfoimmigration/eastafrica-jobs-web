@@ -2,22 +2,22 @@
 import { supabase } from "../utils/supabaseClient";
 import "./CheckStatus.css";
 
-const GERMAN_JOBS = [
+const INTERNATIONAL_JOBS = [
   {
-    category: "Information Technology",
-    jobs: ["Frontend Developer", "Backend Developer", "Cloud Architect", "Cybersecurity Specialist", "DevOps Engineer"]
+    category: "Technical & Engineering",
+    jobs: ["Systems Engineer", "Civil Infrastructure", "Automation Specialist", "Maintenance Technician"]
   },
   {
-    category: "Engineering & Technical",
-    jobs: ["Mechanical Design Engineer", "Electrical Systems Engineer", "Civil Infrastructure Engineer", "Automation & Robotics Specialist"]
+    category: "Healthcare Services",
+    jobs: ["Clinical Assistant", "Physical Therapist", "Support Worker", "Healthcare Coordinator"]
   },
   {
-    category: "Healthcare & Elderly Care",
-    jobs: ["Geriatric Care Specialist", "Physical Therapist", "Senior Care Assistant", "Home Care Coordinator", "Clinical Support Worker"]
+    category: "Skilled Trades",
+    jobs: ["Precision Operator", "Industrial Technician", "Warehouse Associate", "Logistics Coordinator"]
   },
   {
-    category: "Manufacturing & Logistics",
-    jobs: ["CNC Precision Operator", "Warehouse Operations Manager", "Quality Assurance Inspector", "Industrial Assembly Technician"]
+    category: "Hospitality & Services",
+    jobs: ["Service Associate", "Culinary Specialist", "Facility Management", "Guest Relations"]
   }
 ];
 
@@ -179,6 +179,7 @@ export default function CheckStatus() {
       "Interview Confirmed": { cls: "badge-approved", icon: "✅", label: "Interview Booked", step: 4 },
       "Approved": { cls: "badge-approved", icon: "🎉", label: "Final Approval", step: 5 },
       "Rejected": { cls: "badge-rejected", icon: "❌", label: "Notice of Refusal", step: 5 },
+      "Verified": { cls: "badge-review", icon: "✅", label: "Initial Verification Passed", step: 2 },
       "On Hold": { cls: "badge-onhold", icon: "⏸️", label: "Pending Additional Info", step: 2 },
     };
     return map[status] || { cls: "badge-other", icon: "ℹ️", label: status, step: 0 };
@@ -326,7 +327,7 @@ export default function CheckStatus() {
               <div className="cs-cta-strip cs-job-cta">
                 <div>
                   <p className="cs-cta-title">🎯 Final Step: Select Your Deployment Role</p>
-                  <p className="cs-cta-sub">Your application is approved. Please select your specific job role in Germany.</p>
+                  <p className="cs-cta-sub">Your application is approved. Please select your specific job role for international placement.</p>
                 </div>
                 <button className="cs-primary-btn" onClick={() => setShowJobModal(true)}>
                   Select Available Job →
@@ -343,8 +344,8 @@ export default function CheckStatus() {
           <div className="cs-modal cs-job-modal">
             <button className="cs-modal-close" onClick={() => setShowJobModal(false)}>✕</button>
             <div className="cs-modal-header">
-              <span className="cs-modal-icon">🇩🇪</span>
-              <h3>Select Your Germany Job</h3>
+              <span className="cs-modal-icon">🇪🇦</span>
+              <h3>Select Your Deployment Job</h3>
             </div>
 
             <div className="cs-modal-section">
@@ -358,7 +359,7 @@ export default function CheckStatus() {
                 }}
               >
                 <option value="">Select a Sector</option>
-                {GERMAN_JOBS.map(cat => (
+                {INTERNATIONAL_JOBS.map(cat => (
                   <option key={cat.category} value={cat.category}>{cat.category}</option>
                 ))}
               </select>
@@ -373,7 +374,7 @@ export default function CheckStatus() {
                 disabled={!selectedCategory}
               >
                 <option value="">Select a Role</option>
-                {selectedCategory && GERMAN_JOBS.find(c => c.category === selectedCategory)?.jobs.map(job => (
+                {selectedCategory && INTERNATIONAL_JOBS.find(c => c.category === selectedCategory)?.jobs.map(job => (
                   <option key={job} value={job}>{job}</option>
                 ))}
               </select>

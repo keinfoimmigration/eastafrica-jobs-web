@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   });
 
   const mailOptions = {
-    from: `"East African Community" <${process.env.EMAIL_USER}>`,
+    from: { name: "East African Community", address: process.env.EMAIL_USER },
     to: email,
     subject: `Your Verification Code - EAC Portal`,
     text: `Your email verification code is: ${otp}. This code will expire in 10 minutes.`,
