@@ -93,13 +93,15 @@ export default function Cynthia() {
                 ));
                 fetchApplicants(); // Still re-fetch to ensure sync with DB
             } else {
-                let errorMsg = "Failed to send email";
+                const rawText = await response.text();
+                let errorMsg = `Server error (${response.status})`;
                 try {
-                    const data = await response.json();
+                    const data = JSON.parse(rawText);
                     errorMsg = data.error || data.details || errorMsg;
                 } catch {
-                    const text = await response.text();
-                    errorMsg = text ? `Server error: ${text.slice(0, 120)}` : `Server error (${response.status})`;
+                    if (rawText) {
+                        errorMsg = `Server error: ${rawText.slice(0, 120)}`;
+                    }
                 }
                 throw new Error(errorMsg);
             }
@@ -145,13 +147,15 @@ export default function Cynthia() {
                 Swal.fire("Sent!", "The official job offer letter (PDF) has been sent successfully.", "success");
                 fetchApplicants();
             } else {
-                let errorMsg = "Failed to send offer letter";
+                const rawText = await response.text();
+                let errorMsg = `Server error (${response.status})`;
                 try {
-                    const data = await response.json();
+                    const data = JSON.parse(rawText);
                     errorMsg = data.error || data.details || errorMsg;
                 } catch {
-                    const text = await response.text();
-                    errorMsg = text ? `Server error: ${text.slice(0, 120)}` : `Server error (${response.status})`;
+                    if (rawText) {
+                        errorMsg = `Server error: ${rawText.slice(0, 120)}`;
+                    }
                 }
                 throw new Error(errorMsg);
             }
