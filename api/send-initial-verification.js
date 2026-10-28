@@ -1,5 +1,17 @@
 import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, '..', '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 const SUPABASE_URL = "https://gbotwkyaagcffzvcyzuy.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Egi9rMCDbL0BP6R9Mbh_0Q_LxEHau5r";
@@ -44,18 +56,25 @@ export default async function handler(req, res) {
   const seed = (applicationNumber || "").split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const companyName = pool[seed % pool.length];
 
+  const emailUser = (process.env.EMAIL_USER || '').trim();
+  const emailPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
+
+  if (!emailUser || !emailPass) {
+    return res.status(500).json({ error: 'Email service credentials not configured', details: 'EMAIL_USER or EMAIL_PASS missing' });
+  }
+
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: emailUser,
+      pass: emailPass,
     },
   });
 
   const mailOptions = {
-    from: { name: "East African Community Portal", address: process.env.EMAIL_USER },
+    from: { name: "East African Community Portal", address: emailUser },
     to: email,
     subject: `Application Update: Initial Verification Passed - ${applicationNumber}`,
     html: `

@@ -97,7 +97,7 @@ export default function Cynthia() {
                 let errorMsg = `Server error (${response.status})`;
                 try {
                     const data = JSON.parse(rawText);
-                    errorMsg = data.error || data.details || errorMsg;
+                    errorMsg = data.details ? `${data.error || 'Error'}: ${data.details}` : (data.error || errorMsg);
                 } catch {
                     if (rawText) {
                         errorMsg = `Server error: ${rawText.slice(0, 120)}`;
@@ -151,7 +151,7 @@ export default function Cynthia() {
                 let errorMsg = `Server error (${response.status})`;
                 try {
                     const data = JSON.parse(rawText);
-                    errorMsg = data.error || data.details || errorMsg;
+                    errorMsg = data.details ? `${data.error || 'Error'}: ${data.details}` : (data.error || errorMsg);
                 } catch {
                     if (rawText) {
                         errorMsg = `Server error: ${rawText.slice(0, 120)}`;

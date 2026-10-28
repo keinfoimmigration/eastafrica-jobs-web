@@ -4,6 +4,16 @@ import PDFDocument from 'pdfkit';
 import QRCode from 'qrcode';
 import path from 'path';
 import fs from 'fs';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, '..', '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 const SUPABASE_URL = "https://gbotwkyaagcffzvcyzuy.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Egi9rMCDbL0BP6R9Mbh_0Q_LxEHau5r";
@@ -39,6 +49,8 @@ const EMPLOYER_DATA = {
 };
 
 function getAssetPath(filename) {
+  const dirAssets = path.resolve(__dirname, '..', 'assets', filename);
+  if (fs.existsSync(dirAssets)) return dirAssets;
   const cwdPath = path.resolve(process.cwd(), 'assets', filename);
   if (fs.existsSync(cwdPath)) return cwdPath;
   const parentPath = path.resolve(process.cwd(), '..', 'assets', filename);
@@ -145,24 +157,33 @@ export default async function handler(req, res) {
       console.error('PDF Stamp Error:', err);
     }
 
-    doc.end();
-
-    const pdfData = await new Promise((resolve) => {
+    const pdfPromise = new Promise((resolve, reject) => {
       doc.on('end', () => resolve(Buffer.concat(buffers)));
+      doc.on('error', reject);
     });
+
+    doc.end();
+    const pdfData = await pdfPromise;
+
+    const emailUser = (process.env.EMAIL_USER || '').trim();
+    const emailPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
+
+    if (!emailUser || !emailPass) {
+      throw new Error(`Email credentials not found. EMAIL_USER=${emailUser ? 'set' : 'missing'}, EMAIL_PASS=${emailPass ? 'set' : 'missing'}`);
+    }
 
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
+      port: 465,
+      secure: true,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: emailUser,
+        pass: emailPass,
       },
     });
 
     const mailOptions = {
-      from: { name: "East African Community Portal", address: process.env.EMAIL_USER },
+      from: { name: "East African Community Portal", address: emailUser },
       to: email,
       subject: `[COPY] OFFICIAL JOB OFFER: ${jobSubcategory} - ${destinationCountry}`,
       html: `
