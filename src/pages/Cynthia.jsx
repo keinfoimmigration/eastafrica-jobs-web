@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { supabase } from "../utils/supabaseClient";
 import "./Cynthia.css";
 
 export default function Cynthia() {
@@ -15,20 +16,34 @@ export default function Cynthia() {
 
     const fetchApplicants = async () => {
         try {
-            const response = await fetch("/api/get-applicants");
-            const data = await response.json();
-            
-            if (!response.ok) {
-                const errorMsg = data.details || data.error || "Unknown error";
-                throw new Error(errorMsg);
+            setLoading(true);
+            // 1. Direct fetch from Supabase (works in all environments)
+            const { data, error } = await supabase
+                .from('eacapplications')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (!error && data) {
+                setApplicants(data);
+                return;
             }
-            
-            setApplicants(data);
+
+            // 2. Fallback to API endpoint if direct Supabase client fails
+            const response = await fetch("/api/get-applicants");
+            const contentType = response.headers.get("content-type") || "";
+
+            if (!response.ok || !contentType.includes("application/json")) {
+                const text = await response.text();
+                throw new Error(error?.message || `Server error (${response.status}): ${text.slice(0, 100)}`);
+            }
+
+            const apiData = await response.json();
+            setApplicants(apiData);
         } catch (error) {
             console.error("Error loading applicants:", error);
             Swal.fire({
                 title: "Load Failed",
-                text: error.message,
+                text: error.message || "Failed to load applicants",
                 icon: "error",
                 confirmButtonColor: "#003366"
             });
@@ -78,8 +93,15 @@ export default function Cynthia() {
                 ));
                 fetchApplicants(); // Still re-fetch to ensure sync with DB
             } else {
-                const data = await response.json();
-                throw new Error(data.error || "Failed to send email");
+                let errorMsg = "Failed to send email";
+                try {
+                    const data = await response.json();
+                    errorMsg = data.error || data.details || errorMsg;
+                } catch {
+                    const text = await response.text();
+                    errorMsg = text ? `Server error: ${text.slice(0, 120)}` : `Server error (${response.status})`;
+                }
+                throw new Error(errorMsg);
             }
         } catch (error) {
             Swal.fire("Failed", error.message, "error");
@@ -123,8 +145,15 @@ export default function Cynthia() {
                 Swal.fire("Sent!", "The official job offer letter (PDF) has been sent successfully.", "success");
                 fetchApplicants();
             } else {
-                const data = await response.json();
-                throw new Error(data.error || "Failed to send offer letter");
+                let errorMsg = "Failed to send offer letter";
+                try {
+                    const data = await response.json();
+                    errorMsg = data.error || data.details || errorMsg;
+                } catch {
+                    const text = await response.text();
+                    errorMsg = text ? `Server error: ${text.slice(0, 120)}` : `Server error (${response.status})`;
+                }
+                throw new Error(errorMsg);
             }
         } catch (error) {
             Swal.fire("Error", error.message, "error");
